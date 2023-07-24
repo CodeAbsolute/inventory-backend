@@ -46,7 +46,8 @@ class ProductResourceController extends Controller
             if ($request->hasFile('images')) {
                 foreach ($request->file('images') as $image) {
                     //  store images in products folder
-                    $filename = time() . '_' . $image->getClientOriginalExtension();
+                    $filename = time() . '_' . $image->getClientOriginalName();
+                    // $filename = time() . '.' . $image->getClientOriginalName();
                     $image->move($folderPath, $filename);
                     // saving image path and product id in images table
                     $newImage = new Image();
@@ -96,6 +97,7 @@ class ProductResourceController extends Controller
             foreach ($products as $product) {
                 $images = Image::where('product_id', $product->id)->get();
                 $product->images = $images ? $images : [];
+
             }
             if ($products) {
                 return response(['success' => true, 'count' => count($products), 'products' => $products], 200);

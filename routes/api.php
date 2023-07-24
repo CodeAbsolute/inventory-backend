@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Route;
 
 // verified Users API route
 // Route::middleware('verified')->group(function () {
+// });
+
 // Auth API route
 Route::post('/v1/login', [AuthController::class, 'login']);
 
@@ -20,7 +22,7 @@ Route::post('/v1/forgotPassword', [AuthController::class, 'forgotPassword']);
 
 // Reset Password API route
 Route::put('/v1/resetPassword/{token}', [AuthController::class, 'resetPassword']);
-// });
+
 
 Route::middleware(['auth:api'])->prefix('v1')->group(function () {
 
@@ -41,7 +43,7 @@ Route::middleware(['auth:api'])->prefix('v1')->group(function () {
 Route::middleware(['auth:api'])->group(function () {
     // Logout API route
     Route::get('/v1/logout', [AuthController::class, 'logout']);
-
+    
     // Add User API route
     Route::post('/v1/addUser', [UserController::class, 'addUser']);
 
@@ -58,8 +60,9 @@ Route::middleware(['auth:api'])->group(function () {
     Route::delete('/v1/user/{id}', [UserController::class, 'deleteUser']);
 
 });
+*/
 
-
+/*
 // Product API routes
 Route::middleware(['auth:api'])->group(function () {
 
@@ -80,6 +83,9 @@ Route::middleware(['auth:api'])->group(function () {
 });
 
 // Category API routes
+*/
+
+/*
 Route::middleware('auth:api')->group(function () {
 
     // Add Category API route
