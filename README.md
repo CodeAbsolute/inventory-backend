@@ -25,4 +25,14 @@ m - migration, r - resource, c - controller
 php artisan optimize
 ```
 
-#
+### To work with helper functions
+
+```
+add this line in composer.json file
+"files": [
+    "app/helpers.php"
+]
+and run this command
+
+composer dump-autoload
+```

@@ -15,25 +15,39 @@ class ProductResourceController extends Controller
     public $path = "products/";
 
     /** Delete images in products folder.
-     * @param  integer $id
+     * @param  integer $product_id => product id
+     * @param  array $onlyDeleteSelectedImagesArray => array of image ids to be deleted
      * @return array
      */
-    protected function deleteImages($id)
+    protected function deleteImages($product_id, $onlyDeleteSelectedImagesArray = [])
     {
         try {
-            // getting images from db
-            $images = Image::where('product_id', $id)->get();
-            // deleting images
-            foreach ($images as $image) {
-                // unlink($image);
-                $image->delete();
+            // var_dump($onlyDeleteSelectedImagesArray);
+            // deleting selected images
+            if (count($onlyDeleteSelectedImagesArray) > 0) {
+                foreach ($onlyDeleteSelectedImagesArray as $imageId) {
+                    $image = Image::where(['id' => $imageId, 'product_id' => $product_id])->first();
+                    // echo $image;
+                    $image->delete();
+                }
+            } else {
+                // getting images from db
+                $images = Image::where('product_id', $product_id)->get();
+                if (count($images) == 0) {
+                    return ['message' => 'images not found'];
+                }
+                // var_dump($images);
+                // deleting all images
+                foreach ($images as $image) {
+                    // unlink($image);
+                    $image->delete();
+                }
             }
             return [];
         } catch (Exception $e) {
             return ['error' => $e->getMessage()];
         }
     }
-
     /** Save images in products folder.
      * @param  \Illuminate\Http\Request  $request
      * @param  integer $product_id
@@ -77,7 +91,7 @@ class ProductResourceController extends Controller
             'user_id' => 'required',
             'description' => 'required | max:1000',
             'price' => 'required | numeric | min:100 | max:1000000',
-            'images.*' => ' required | file | mimes:jpg,png,jpeg |max:512 '
+            'images.*' => 'file | mimes:jpg,png,jpeg |max:512 '
         ]);
 
         if ($validator->fails()) {
@@ -97,7 +111,6 @@ class ProductResourceController extends Controller
             foreach ($products as $product) {
                 $images = Image::where('product_id', $product->id)->get();
                 $product->images = $images ? $images : [];
-
             }
             if ($products) {
                 return response(['success' => true, 'count' => count($products), 'products' => $products], 200);
@@ -132,6 +145,7 @@ class ProductResourceController extends Controller
             $product->category_id = $request->category_id;
             $product->user_id = $request->user_id;
             $product->save();
+
             /* Uploading images to products folder and saving path in images table */
             $areImagesSaved = $this->saveImages($request, $product->id, 'products');
             if (count($areImagesSaved)) {
@@ -197,16 +211,16 @@ class ProductResourceController extends Controller
 
             /* Deleting previous product images */
             if ($request->hasFile('images')) {
-                $areImagesDeleted = $this->deleteImages($id);
+                $areImagesDeleted = $this->deleteImages($id, json_decode($request->onlyDeleteSelectedImagesArray));
                 if (count($areImagesDeleted)) {
                     return response(['errors' => $areImagesDeleted], 422);
                 }
-            }
 
-            /* Uploading images to products folder and saving path in images table */
-            $areImagesSaved = $this->saveImages($request, $id, 'products');
-            if (count($areImagesSaved)) {
-                return response(['errors' => $areImagesSaved], 422);
+                /* Uploading images to products folder and saving path in images table */
+                $areImagesSaved = $this->saveImages($request, $id, 'products');
+                if (count($areImagesSaved)) {
+                    return response(['errors' => $areImagesSaved], 422);
+                }
             }
             $images = Image::where('product_id', $id)->get();
             $product->images = $images ? $images : [];
@@ -231,7 +245,7 @@ class ProductResourceController extends Controller
             $product = Product::find($id);
 
             if ($product) {
-                // deleting product images
+                // deleting all product images
                 $areImagesDeleted = $this->deleteImages($id);
                 if (count($areImagesDeleted)) {
                     return response(['errors' => $areImagesDeleted], 422);

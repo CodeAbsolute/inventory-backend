@@ -65,12 +65,13 @@ class UserResourceController extends Controller
                 $data['from'] = 'mahesh.gajakosh@peerconnexions.com';
                 $data['url'] = "http://localhost:3000/verifyEmail/" . $token;
                 $user->remember_token = $token;
-                Mail::send('mail.verify-email', ['data' => $data], function ($message) use ($data) {
-                    $message
-                        ->to($data['email'])
-                        ->subject($data['subject'])
-                        ->from($data['from']);
-                });
+                // Mail::send('mail.verify-email', ['data' => $data], function ($message) use ($data) {
+                //     $message
+                //         ->to($data['email'])
+                //         ->subject($data['subject'])
+                //         ->from($data['from']);
+                // });
+                sendEmail('mail.verify-email', $data);
                 $user->save();
                 // storing password reset token
                 DB::table('password_resets')->insert([
@@ -105,7 +106,7 @@ class UserResourceController extends Controller
                 return response(['message' => 'User does not exist'], 404);
             }
         } catch (Exception $e) {
-            return response(['error' => $e->getMessage()], 401);
+            return response(['error' => $e->getMessage()], 500);
         }
     }
 
@@ -122,7 +123,7 @@ class UserResourceController extends Controller
         try {
             $user = User::find($id);
             if (auth()->user()->id == $id) {
-                return response(['message' => 'You cannot delete yourself'], 401);
+                return response(['message' => 'You cannot delete yourself'], 403);
             }
             if ($user) {
                 $user->delete();

@@ -58,5 +58,8 @@
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
         ]
-    }
+    },
+    "files": [
+        "app/helpers.php"
+    ]
 }
