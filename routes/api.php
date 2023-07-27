@@ -27,7 +27,6 @@ Route::put('/v1/resetPassword/{token}', [AuthController::class, 'resetPassword']
 Route::middleware(['auth:api'])->prefix('v1')->group(function () {
 
     Route::resource('users', UserResourceController::class);
-
     Route::resource('products', ProductResourceController::class);
 
     Route::resource('category', CategoryResourceController::class);
@@ -85,7 +84,7 @@ Route::middleware(['auth:api'])->group(function () {
 // Category API routes
 */
 
-/*
+/* auth api routes
 Route::middleware('auth:api')->group(function () {
 
     // Add Category API route

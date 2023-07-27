@@ -108,7 +108,9 @@ class AuthController extends Controller
                 'title' => 'Reset Password Notification',
                 'url' => 'http://localhost:3000/resetPassword/' . $tokenData->token
             ];
-            sendEmail('mail.reset-password', $data);
+
+            $this->sendEmail('mail.reset-password', $data);
+            // sendEmail('mail.reset-password', $data);
 
             return response(['success' => true, 'message' => 'Reset password link sent on your email id.']);
         } catch (Exception $e) {

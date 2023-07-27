@@ -65,13 +65,13 @@ class UserResourceController extends Controller
                 $data['from'] = 'mahesh.gajakosh@peerconnexions.com';
                 $data['url'] = "http://localhost:3000/verifyEmail/" . $token;
                 $user->remember_token = $token;
-                // Mail::send('mail.verify-email', ['data' => $data], function ($message) use ($data) {
-                //     $message
-                //         ->to($data['email'])
-                //         ->subject($data['subject'])
-                //         ->from($data['from']);
-                // });
-                sendEmail('mail.verify-email', $data);
+                Mail::send('mail.verify-email', ['data' => $data], function ($message) use ($data) {
+                    $message
+                        ->to($data['email'])
+                        ->subject($data['subject'])
+                        ->from($data['from']);
+                });
+                // sendEmail('mail.verify-email', $data);
                 $user->save();
                 // storing password reset token
                 DB::table('password_resets')->insert([

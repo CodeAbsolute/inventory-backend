@@ -15,8 +15,8 @@ class CreateImagesTable extends Migration
     {
         Schema::create('images', function (Blueprint $table) {
             $table->id();
-            $table->string('path');
             $table->unsignedBigInteger('product_id');
+            $table->string('path');
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
             $table->dateTime('created_at');
             $table->softDeletes();
